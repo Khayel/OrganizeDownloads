@@ -7,6 +7,7 @@ import time
 import sys
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+from win10toast import ToastNotifier
 
 
 class Move_Downloads(PatternMatchingEventHandler):
@@ -35,6 +36,8 @@ class Move_Downloads(PatternMatchingEventHandler):
                     subprocess.Popen(
                         f'explorer {sys.argv[2]}\{fileExtension}')
                 except FileExistsError:
+                    toaster.show_toast(
+                        "Download Watcher!", f'File with name {filename} already exists. Please rename', icon_path="alert.ico", duration=5)
                     pass
                 except FileNotFoundError:
                     pass
@@ -49,6 +52,9 @@ if __name__ == "__main__":
     event_handler = Move_Downloads()
 
     observer = Observer()
+
+    global toaster
+    toaster = ToastNotifier()
 
     observer.schedule(event_handler, downloads_path, recursive=True)
 
